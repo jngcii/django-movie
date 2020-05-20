@@ -39,9 +39,3 @@ class Seho(models.Model):
     is_like = models.BooleanField()
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='sehos')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sehos')
-
-
-class Review(models.Model):
-    movie = models.ForeignKey(Movie)
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reviews')
-    caption = models.TextField()
