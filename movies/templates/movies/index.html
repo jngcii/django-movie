@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
-
+{% load bootstrap_pagination %}
 
 {% block body %}
-
   <div class="search-container mb-5">
     <form class="form d-flex justify-content-center">
       <input class="form-control mr-3" style="width: 300px;">
@@ -14,8 +13,7 @@
 
 
   <div class="row">
-  {% for movie in movies %}
-
+  {% for movie in page_obj %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 position-relative movies">
       <div class="position-relative d-flex flex-column justify-content-end">
         <a href="{% url 'movies:detail' movie.id %}">
@@ -32,12 +30,37 @@
           <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: -10px;">{{ movie.bad_seho }}</span>
         </div>
       </div>
-
     </div>
 
   {% endfor %}
+
+  {% bootstrap_paginate page_obj range=5 show_prev_next="false" show_first_last="true" %}
   </div>
   
+  <hr>
+  
+  <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+  
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+  
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+  </div>
+
+
+
+
+
 
 <script>
 
