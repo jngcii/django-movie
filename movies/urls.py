@@ -6,6 +6,6 @@ app_name = 'movies'
 urlpatterns = [
     path('', views.index, name='index'),
     path('<int:movie_id>/', views.detail, name='detail'),
-    # path('<int:movie_id>/good/', views.good_seho, name='good'),
-    # path('<int:movie_id>/bad/', views.bad_seho, name='bad'),
+    path('<int:movie_id>/good/', views.good_seho, name='good'),
+    path('<int:movie_id>/bad/', views.bad_seho, name='bad'),
 ]

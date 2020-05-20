@@ -1,6 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
+from django.http import JsonResponse
 from .models import Movie, Tag, Seho
+from reviews.forms import ReviewForm
 
 
 def index(request):
@@ -18,48 +20,79 @@ def index(request):
 
 def detail(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
+    form = ReviewForm()
 
     context = {
-        'movie': movie
+        'movie': movie,
+        'form': form,
     }
 
     return render(request, 'movies/detail.html', context)
 
 
-# def good_seho(request, movie_id):
-#     movie = get_object_or_404(Movie, id=movie_id)
-#     user = request.user
-#     try:
-#         seho = Seho.objects.get(creator=user, movie=movie)
-#         if seho.is_like:
-#             # status = 400
-#         else:
-#             seho.is_like = True
-#             # status = 200
-#     except Seho.DoesNotExist:
-#         seho = Seho.objects.create(is_like=True, creator=user, movie=movie)
-#         if seho:
-#             # status = 200
-#         else:
-#             # status = 400
+def good_seho(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    user = request.user
+    result = {
+        'is_like': True,
+        'is_unlike': False,
+        'like_cnt': 0,
+        'unlike_cnt': 0
+    }
+    try:
+        seho = Seho.objects.get(creator=user, movie=movie)
+        if seho.is_like:
+            seho.delete()
+            result['is_like'] = False
+        else:
+            seho.is_like = True
+            seho.save()
+        like_cnt = movie.sehos.filter(is_like=True).count()
+        unlike_cnt = movie.sehos.filter(is_like=False).count()
+        result['like_cnt'] = like_cnt
+        result['unlike_cnt'] = unlike_cnt
+            
+    except Seho.DoesNotExist:
+        seho = Seho.objects.create(is_like=True, creator=user, movie=movie)
+        if not seho: result['is_like'] = False
+        like_cnt = movie.sehos.filter(is_like=True).count()
+        unlike_cnt = movie.sehos.filter(is_like=False).count()
+        result['like_cnt'] = like_cnt
+        result['unlike_cnt'] = unlike_cnt
+    
+    return JsonResponse(result)
 
 
-# def bad_seho(request, movie_id):
-#     movie = get_object_or_404(Movie, id=movie_id)
-#     user = request.user
-#     try:
-#         seho = Seho.objects.get(creator=user, movie=movie)
-#         if seho.is_like:
-#             seho.is_like = False
-#             # status = 200
-#         else:
-#             # status = 400
-#     except Seho.DoesNotExist:
-#         seho = Seho.objects.create(is_like=False, creator=user, movie=movie)
-#         if seho:
-#             # status = 200
-#         else:
-#             # status = 400
+def bad_seho(request, movie_id):
+    movie = get_object_or_404(Movie, id=movie_id)
+    user = request.user
+    result = {
+        'is_like': False,
+        'is_unlike': True,
+        'like_cnt': 0,
+        'unlike_cnt': 0
+    }
+    try:
+        seho = Seho.objects.get(creator=user, movie=movie)
+        if seho.is_like:
+            seho.is_like = False
+            seho.save()
+        else:
+            seho.delete()
+            result['is_unlike'] = False
+        like_cnt = movie.sehos.filter(is_like=True).count()
+        unlike_cnt = movie.sehos.filter(is_like=False).count()
+        result['like_cnt'] = like_cnt
+        result['unlike_cnt'] = unlike_cnt
+    except Seho.DoesNotExist:
+        seho = Seho.objects.create(is_like=False, creator=user, movie=movie)
+        if not seho: result['is_unlike'] = False
+        like_cnt = movie.sehos.filter(is_like=True).count()
+        unlike_cnt = movie.sehos.filter(is_like=False).count()
+        result['like_cnt'] = like_cnt
+        result['unlike_cnt'] = unlike_cnt
+    
+    return JsonResponse(result)
 
 
 # def fetch_movies(request):

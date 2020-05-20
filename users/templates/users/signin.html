@@ -8,19 +8,21 @@
 <div class="row mt-5">
     <div class="col-0 col-md-3 col-lg-4"></div>
     <div class="col-12 col-md-6 col-lg-4">
-        <h2>로그인</h2>
+        <h3 class="my-3">로그인</h3>
         <form method="post" class="form">
           {% csrf_token %}
           {% bootstrap_form form %}
           {% buttons %}
-            <button type="submit" class="btn btn-primary">
+            <button type="submit" class="btn btn-primary w-100 bg-jo">
               로그인
             </button>
           {% endbuttons %}
         </form>
 
-        <span>계정이 없으신가요?</span>
-        <a href={% url 'users:signup' %}>회원가입</a>
+        <div class="text-center">
+            <span>계정이 없으신가요?</span>
+            <a href={% url 'users:signup' %}>회원가입</a>
+        </div>
     </div>
     <div class="col-0 col-md-3 col-lg-4"></div>
 </div>

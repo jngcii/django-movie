@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/70e166a0a9.js" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <title>조의 영화</title>
   <style>
     body {
@@ -17,6 +19,19 @@
     a {
       text-decoration: none;
     }
+    .bg-jo {
+      background-color: #8c7ae6 !important;
+    }
+    .seho {
+      width: 70px;
+      height: 70px;
+      border-radius: 35px;
+      bottom: 10px;
+      border: 3px solid #fff;
+    }
+    .my-opacity {
+      opacity: 0.5;
+    }
   </style>
 </head>
 <body>
@@ -29,15 +44,24 @@
     <li class="nav-item d-none d-md-block" style="width: 200px;">
     </li>
     <li class="nav-item">
-      <a class="nav-link logo" href="#">조의 영화</a>
+      <a class="nav-link logo" href="{% url 'movies:index' %}">조의 영화</a>
     </li>
+    {% if request.user.is_authenticated %}
     <li class="nav-item d-flex justify-content-end" style="width: 200px;">
-      <a class="nav-link" href="#">회원가입</a>
-      <a class="nav-link" href="#">로그인</a>
+      <span>{{ request.user.username }}님 환영합니다</span>
+      <a class="nav-link" href="{% url 'users:signout' %}">로그아웃</a>
     </li>
+    {% else %}
+    <li class="nav-item d-flex justify-content-end align-items-center" style="width: 200px;">
+      <a class="nav-link" href="{% url 'users:signin' %}">로그인</a>
+      <a class="nav-link" href="{% url 'users:signup' %}">
+        <div class="btn btn-primary bg-jo">회원가입</div>
+      </a>
+    </li>
+    {% endif %}
   </ul>
 
-  <div class="container">
+  <div class="container pt-4">
     {% block body %}
     {% endblock %}
   </div>

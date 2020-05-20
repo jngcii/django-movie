@@ -1,12 +1,115 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
 
 {% block body %}
-  <div>
-    <div>{{ movie.title }}</div>
-    <div>{{ movie.release_date }}</div>
-    <div>{{ movie.poster }}</div>
-    <div>{{ movie.good_seho }}</div>
-    <div>{{ movie.bad_seho }}</div>
+  <h3>{{ movie.title }}</h3>
+
+  <div class="row">
+    <div class="col-12 col-sm-4">
+      <img class="w-100" src="{{ movie.poster }}">
+    </div>
+    <div class="col-12 col-sm-8">
+      <h5>개봉일 : {{ movie.release_date }}</h5>
+      <p>{{ movie.overview }}</p>
+    </div>
   </div>
+
+
+  <div class="position-relative d-flex flex-column mx-auto" style="width: 250px; height: 120px;">
+    <div class="good seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-start; left: 10px;" data-id="{{ movie.id }}">
+      <img draggable="false" src="https://lh3.googleusercontent.com/proxy/p4JzP0hLKghtAsTPFsOZChFjrJ1pJc8X3s0rz4qnWL5mRnekGWd515DfgPQxw316LXueJb9hDvPzc_5VG1MJA7Z-1tcjB86xj-SFo-z99UEvIirNml2ZcCXIKSODIDDCSzu44GAW-16-Jwg_6BuYdDn7" class="seho my-opacity">
+      <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: -30px;">{{ movie.good_seho }}</span>
+    </div>
+
+    <div class="bad seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-end; right: 10px;" data-id="{{ movie.id }}">
+      <img draggable="false" src="https://lh3.googleusercontent.com/proxy/cco_gmP-HqObsn360yglSAPNPM-Lzl8c2iKoEkRbABeUVAG4wtkkoPMX54aCBSPgat9EdVcCdSpTq3-P8hhZhlbzAxPBLx71vF8EKKXEk96j0RtD-3yVzJs1H8Tmy2CgPkWFPN9_NN1O1uooMFtPO1qMFOckfLlw2zWd7iXggQK57CRQj5gPwKE" class="seho my-opacity">
+      <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: -30px;">{{ movie.bad_seho }}</span>
+    </div>
+  </div>
+
+
+  <div class="mt-5">
+
+    <form action="{% url 'reviews:review_api' movie.id %}" method="post" class="form d-flex">
+      {% csrf_token %}
+      <input class="form-control mr-3" name="content" placeholder="영화에 대한 리뷰를 자유롭게 작성하세호." required style="flex: 1;">
+      {% buttons %}
+        <button type="submit" class="btn btn-primary w-100 bg-jo">
+          submit
+        </button>
+      {% endbuttons %}
+    </form>
+
+    <ul>
+      {% for review in movie.reviews.all %}
+        <li>
+          <div>
+            <span class="h5">{{ review.creator.username }}</span>
+            <span class="font-weight-thin secondary">{{ review.created_at }}</span>
+          </div>
+          <div>{{ review.content }}</div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  <script>
+    const good = document.querySelector(".good");
+    const goodImg = good.querySelector("img");
+    const goodCnt = good.querySelector("span");
+    const bad = document.querySelector(".bad");
+    const badImg = bad.querySelector("img");
+    const badCnt = bad.querySelector("span");
+
+    const onGood = function(e) {
+      const movieID = good.dataset.id;
+      const url = `/movies/${movieID}/good/`;
+      axios.get(url).then(res => {
+        const { is_like, is_unlike, like_cnt, unlike_cnt } = res.data;
+        if (is_like) {
+          goodImg.classList.remove("my-opacity");
+          badImg.classList.add("my-opacity")
+        } else {
+          goodImg.classList.add("my-opacity");
+        }
+        if (is_unlike) {
+          goodImg.classList.add("my-opacity");
+          badImg.classList.remove("my-opacity")
+        } else {
+          badImg.classList.add("my-opacity")
+        }
+        goodCnt.innerText = like_cnt;
+        badCnt.innerText = unlike_cnt;
+      })
+    }
+    
+    const onBad = function(e) {
+      const movieId = bad.dataset.id;
+      const url = `/movies/${movieId}/bad/`;
+      axios.get(url).then(res => {
+        const { is_like, is_unlike, like_cnt, unlike_cnt } = res.data;
+        if (is_like) {
+          goodImg.classList.remove("my-opacity");
+          badImg.classList.add("my-opacity")
+        } else {
+          goodImg.classList.add("my-opacity");
+        }
+        if (is_unlike) {
+          goodImg.classList.add("my-opacity");
+          badImg.classList.remove("my-opacity")
+        } else {
+          badImg.classList.add("my-opacity")
+        }
+        goodCnt.innerText = like_cnt;
+        badCnt.innerText = unlike_cnt;
+      })
+    }
+
+    good.addEventListener("click", onGood);
+    bad.addEventListener("click", onBad);
+  
+  </script>
   
 {% endblock %}

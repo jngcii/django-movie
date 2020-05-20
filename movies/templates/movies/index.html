@@ -1,16 +1,103 @@
 {% extends 'base.html' %}
 
-{% block body %}
-  {% for movie in movies %}
 
-  <div>
-    <div>{{ movie.title }}</div>
-    <div>{{ movie.release_date }}</div>
-    <div>{{ movie.poster }}</div>
-    <div>{{ movie.good_seho }}</div>
-    <div>{{ movie.bad_seho }}</div>
+{% block body %}
+
+  <div class="search-container mb-5">
+    <form class="form d-flex justify-content-center">
+      <input class="form-control mr-3" style="width: 300px;">
+      <button class="btn btn-primary">
+        <i class="fas fa-search"></i>
+      </button>
+    </form>
   </div>
 
+
+  <div class="row">
+  {% for movie in movies %}
+
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 position-relative movies">
+      <div class="position-relative d-flex flex-column justify-content-end">
+        <a href="{% url 'movies:detail' movie.id %}">
+          <img src="{{ movie.poster }}" class="w-100">
+        </a>
+
+        <div class="good seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-start; left: 10px;" data-id="{{ movie.id }}">
+          <img draggable="false" src="https://lh3.googleusercontent.com/proxy/p4JzP0hLKghtAsTPFsOZChFjrJ1pJc8X3s0rz4qnWL5mRnekGWd515DfgPQxw316LXueJb9hDvPzc_5VG1MJA7Z-1tcjB86xj-SFo-z99UEvIirNml2ZcCXIKSODIDDCSzu44GAW-16-Jwg_6BuYdDn7" class="seho my-opacity">
+          <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: -10px;">{{ movie.good_seho }}</span>
+        </div>
+
+        <div class="bad seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-end; right: 10px;" data-id="{{ movie.id }}">
+          <img draggable="false" src="https://lh3.googleusercontent.com/proxy/cco_gmP-HqObsn360yglSAPNPM-Lzl8c2iKoEkRbABeUVAG4wtkkoPMX54aCBSPgat9EdVcCdSpTq3-P8hhZhlbzAxPBLx71vF8EKKXEk96j0RtD-3yVzJs1H8Tmy2CgPkWFPN9_NN1O1uooMFtPO1qMFOckfLlw2zWd7iXggQK57CRQj5gPwKE" class="seho my-opacity">
+          <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: -10px;">{{ movie.bad_seho }}</span>
+        </div>
+      </div>
+
+    </div>
+
   {% endfor %}
+  </div>
   
+
+<script>
+
+  const movies = document.querySelectorAll(".movies");
+
+  movies.forEach(movie => {
+    const good = movie.querySelector(".good");
+    const goodImg = good.querySelector("img");
+    const goodCnt = good.querySelector("span");
+    const bad = movie.querySelector(".bad");
+    const badImg = bad.querySelector("img");
+    const badCnt = bad.querySelector("span");
+
+    const onGood = function(e) {
+      const movieID = good.dataset.id;
+      const url = `/movies/${movieID}/good/`;
+      axios.get(url).then(res => {
+        const { is_like, is_unlike, like_cnt, unlike_cnt } = res.data;
+        if (is_like) {
+          goodImg.classList.remove("my-opacity");
+          badImg.classList.add("my-opacity")
+        } else {
+          goodImg.classList.add("my-opacity");
+        }
+        if (is_unlike) {
+          goodImg.classList.add("my-opacity");
+          badImg.classList.remove("my-opacity")
+        } else {
+          badImg.classList.add("my-opacity")
+        }
+        goodCnt.innerText = like_cnt;
+        badCnt.innerText = unlike_cnt;
+      })
+    }
+    
+    const onBad = function(e) {
+      const movieId = bad.dataset.id;
+      const url = `/movies/${movieId}/bad/`;
+      axios.get(url).then(res => {
+        const { is_like, is_unlike, like_cnt, unlike_cnt } = res.data;
+        if (is_like) {
+          goodImg.classList.remove("my-opacity");
+          badImg.classList.add("my-opacity")
+        } else {
+          goodImg.classList.add("my-opacity");
+        }
+        if (is_unlike) {
+          goodImg.classList.add("my-opacity");
+          badImg.classList.remove("my-opacity")
+        } else {
+          badImg.classList.add("my-opacity")
+        }
+        goodCnt.innerText = like_cnt;
+        badCnt.innerText = unlike_cnt;
+      })
+    }
+
+    good.addEventListener("click", onGood);
+    bad.addEventListener("click", onBad);
+  })
+
+</script>
 {% endblock %}
