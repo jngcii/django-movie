@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import get_user_model, login, logout
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm
 from .forms import CustomUserCreationForm
 
 # Create your views here.
@@ -9,24 +9,24 @@ from .forms import CustomUserCreationForm
 # 편의상 main => movies:index로 통일
 def signup(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             form.save()
             # main화면으로 돌아가기
             return redirect('movies:index')
 
-    form = UserCreationForm()
+    form = CustomUserCreationForm()
     context = {
         'form':form,
     }
-    return render(request, 'auth/signup.html', context)
+    return render(request, 'users/signup.html', context)
 
 def signin(request):
     if request.user.is_authenticated:
         return redirect('movies:index')
 
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = AuthenticationForm(request, request.POST)
         if form.is_valid():
             user = form.get_user()
             login(request, user)
@@ -37,7 +37,7 @@ def signin(request):
     context = {
         'form':form, 
     }
-    return render(request, 'auth/signin.html', context)
+    return render(request, 'users/signin.html', context)
 
 @login_required
 def signout(request):
