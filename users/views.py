@@ -13,7 +13,7 @@ def signup(request):
         if form.is_valid():
             form.save()
             # main화면으로 돌아가기
-            return redirect('moives:index')
+            return redirect('movies:index')
 
     form = UserCreationForm()
     context = {
@@ -37,7 +37,7 @@ def signin(request):
     context = {
         'form':form, 
     }
-    return render(request, 'auth/signin', context)
+    return render(request, 'auth/signin.html', context)
 
 @login_required
 def signout(request):
