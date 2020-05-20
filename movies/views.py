@@ -6,8 +6,8 @@ from reviews.forms import ReviewForm
 
 # use static json
 from django.contrib.staticfiles.storage import staticfiles_storage
-import requests
 import json
+from pprint import pprint
 
 def index(request):
     # query 받아오기
@@ -132,10 +132,6 @@ def fetch_movies(request):
         10752: '전쟁',
         10770: 'TV영화'}
     
-    # 장르(였던것)
-    
-    for genre_name in hangul_genres.values():        
-        tag = Tag.objects.create(name=genre_name)
 
     # movie 오브젝트 생성
     for movie_json in movie_data:
@@ -148,6 +144,9 @@ def fetch_movies(request):
         poster = tmp_movie['poster_path']
         poster_url = 'https://image.tmdb.org/t/p/w780/' + poster
         
+        if Movie.objects.filter(title=title, release_date=release_date).exists():
+            continue
+
         # 장르만 잠시 빼고 넣음
         movie_obj = Movie.objects.create(
             title=title, 
@@ -155,16 +154,17 @@ def fetch_movies(request):
             release_date=release_date,
             adult=adult,
             overview=overview,
-            poster=poster_url)
+            poster=poster_url
+        )
     
         # 장르만 ManyToMany 추가
-        genres = tmp_movie['genres']
+        genres = tmp_movie['genres']    # 숫자로 된 리스트
         for genre_num in genres:
-            tmp = hangul_genres[genre_num]
-            try:
+            tmp = hangul_genres[genre_num]  # 스트링
+            if Tag.objects.filter(name=tmp).exists():
                 tag = Tag.objects.get(name=tmp)
-            except:
+            else:
                 tag = Tag.objects.create(name=tmp)
-
             movie_obj.tags.add(tag)
-        return render(request, 'movies/index.html')
+
+    return render(request, 'movies/index.html')
