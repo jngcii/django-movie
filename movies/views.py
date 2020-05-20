@@ -60,3 +60,30 @@ def detail(request, movie_id):
 #             # status = 200
 #         else:
 #             # status = 400
+
+
+# def fetch_movies(request):
+
+#     for movie in movies_api:
+#         movie.title
+
+#         for g in movie.genre:
+#             for sample in samples:
+#                 if sample.id == g:
+#                     tmp = sample.name
+#                     # Tag.objects.filter(name=tmp).exist()
+#                     try:
+#                         tag = Tag.objects.get(name=tmp)
+#                     except Tag.DoesNotExist:
+#                         tag = Tag.objects.create(name=tmp)
+#                     movie = Movie.objects.create(title, ori)
+#                     movie.tags.add(tag)
+                
+#     title = models.CharField(max_length=255)
+#     original_title = models.CharField(max_length=255)
+#     release_date = models.DateField()
+#     adult = models.BooleanField()
+#     overview = models.TextField()
+#     poster = models.URLField()
+#     tags = models.ManyToManyField(Tag, blank=True, related_name='movies')
+#     genre = [1, 2, 3]
