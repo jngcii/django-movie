@@ -1,10 +1,27 @@
 {% extends 'base.html' %}
+{% load bootstrap4 %}
+
+{% bootstrap_css %}
+{% bootstrap_javascript jquery='full' %}
 
 {% block body %}
-    <h2>회원가입</h2>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button>회원가입</button>
-    </form>
+<div class="row mt-5">
+    <div class="col-0 col-md-3 col-lg-4"></div>
+    <div class="col-12 col-md-6 col-lg-4">
+        <h2>회원가입</h2>
+        <form method="post" class="form">
+          {% csrf_token %}
+          {% bootstrap_form form %}
+          {% buttons %}
+            <button type="submit" class="btn btn-primary">
+              계정 만들기
+            </button>
+          {% endbuttons %}
+        </form>
+
+        <span>이미 계정이 있으신가요?</span>
+        <a href={% url 'users:signin' %}>로그인</a>
+    </div>
+    <div class="col-0 col-md-3 col-lg-4"></div>
+</div>
 {% endblock %}

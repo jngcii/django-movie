@@ -3,10 +3,43 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <link href="https://fonts.googleapis.com/css2?family=Black+Han+Sans&display=swap" rel="stylesheet">
+  <title>조의 영화</title>
+  <style>
+    body {
+      background-color: #f5f6fa !important;
+    }
+    .logo {
+      font-family: 'Black Han Sans', sans-serif;
+      font-size: 35px;
+      color: #8c7ae6;
+    }
+    a {
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-  {% block body %}
-  {% endblock %}
+  {% load bootstrap4 %}
+
+  {% bootstrap_css %}
+  {% bootstrap_javascript jquery='full' %}
+
+  <ul class="nav justify-content-between align-items-center">
+    <li class="nav-item d-none d-md-block" style="width: 200px;">
+    </li>
+    <li class="nav-item">
+      <a class="nav-link logo" href="#">조의 영화</a>
+    </li>
+    <li class="nav-item d-flex justify-content-end" style="width: 200px;">
+      <a class="nav-link" href="#">회원가입</a>
+      <a class="nav-link" href="#">로그인</a>
+    </li>
+  </ul>
+
+  <div class="container">
+    {% block body %}
+    {% endblock %}
+  </div>
 </body>
 </html>
