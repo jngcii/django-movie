@@ -16,6 +16,14 @@ class Movie(models.Model):
     def __str__(self):
         return '{} : {}'.format(self.title, self.release_date)
 
+    @property
+    def good_seho(self):
+        return self.sehos.filter(is_like=True).count()
+    
+    @property
+    def bad_seho(self):
+        return self.sehos.filter(is_like=False).count()
+
 
 class Tag(models.Model):
     """
