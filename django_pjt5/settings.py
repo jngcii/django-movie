@@ -31,6 +31,11 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    # pip
+    'bootstrap4',
+    'bootstrap-pagination',
+
+    # origin
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # apps
     'users',
     'movies',
 ]
@@ -122,5 +128,5 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-
+# custom user model
 AUTH_USER_MODEL = 'users.User'
