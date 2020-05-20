@@ -3,6 +3,9 @@ from django.db.models import Q
 from django.http import JsonResponse
 from .models import Movie, Tag, Seho
 from reviews.forms import ReviewForm
+# Paginator
+from django.core.paginator import Paginator
+
 
 # use static json
 from django.contrib.staticfiles.storage import staticfiles_storage
@@ -16,8 +19,13 @@ def index(request):
     for keyword in keywords:
         tags = Tag.objects.filter(name=keyword)
         movies = movie.filter(Q(title__icontains=keyword) | Q(tags__in=tags))
+    # paginator
+    paginator = Paginator(movies, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
         'movies': movies,
+        'page_obj':page_obj,
     }
     return render(request, 'movies/index.html', context)
 
