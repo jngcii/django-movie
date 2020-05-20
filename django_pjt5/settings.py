@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     # pip
     'bootstrap4',
-    'bootstrap-pagination',
+    'bootstrap_pagination',
 
     # origin
     'django.contrib.admin',
@@ -130,3 +130,4 @@ STATIC_URL = '/static/'
 
 # custom user model
 AUTH_USER_MODEL = 'users.User'
+LOGIN_URL = '/auth/login/'
