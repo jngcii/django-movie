@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from django.http import JsonResponse
-from .models import Movie, Tag, Seho
+from .models import Movie, Tag, Seho, Favor
 from reviews.forms import ReviewForm
 # Paginator
 from django.core.paginator import Paginator
@@ -59,16 +59,31 @@ def good_seho(request, movie_id):
         seho = Seho.objects.get(creator=user, movie=movie)
         if seho.is_like:
             seho.delete()
+            for tag in movie.tags.all():
+                favor = Favor.objects.get(creator=user, tag=tag)
+                favor.cnt -= 1
+                favor.save()
             result['is_like'] = False
         else:
             seho.is_like = True
             seho.save()
+            for tag in movie.tags.all():
+                favor = Favor.objects.get(creator=user, tag=tag)
+                favor.cnt += 2
+                favor.save()
         like_cnt = movie.sehos.filter(is_like=True).count()
         unlike_cnt = movie.sehos.filter(is_like=False).count()
         result['like_cnt'] = like_cnt
         result['unlike_cnt'] = unlike_cnt
             
     except Seho.DoesNotExist:
+        for tag in movie.tags.all():
+            if Favor.objects.filter(creator=user, tag=tag).exists():
+                favor = Favor.objects.get(creator=user, tag=tag)
+                favor.cnt += 1
+                favor.save()
+            else:
+                favor = Favor.create(creator=user, tag=tag, cnt=1)
         seho = Seho.objects.create(is_like=True, creator=user, movie=movie)
         if not seho: result['is_like'] = False
         like_cnt = movie.sehos.filter(is_like=True).count()
@@ -93,7 +108,15 @@ def bad_seho(request, movie_id):
         if seho.is_like:
             seho.is_like = False
             seho.save()
+            for tag in movie.tags.all():
+                favor = Favor.objects.get(creator=user, tag=tag)
+                favor.cnt -= 2
+                favor.save()
         else:
+            for tag in movie.tags.all():
+                favor = Favor.objects.get(creator=user, tag=tag)
+                favor.cnt += 1
+                favor.save()
             seho.delete()
             result['is_unlike'] = False
         like_cnt = movie.sehos.filter(is_like=True).count()
@@ -101,6 +124,13 @@ def bad_seho(request, movie_id):
         result['like_cnt'] = like_cnt
         result['unlike_cnt'] = unlike_cnt
     except Seho.DoesNotExist:
+        for tag in movie.tags.all():
+            if Favor.objects.filter(creator=user, tag=tag).exists():
+                favor = Favor.objects.get(creator=user, tag=tag)
+                favor.cnt -= 1
+                favor.save()
+            else:
+                favor = Favor.create(creator=user, tag=tag, cnt=-1)
         seho = Seho.objects.create(is_like=False, creator=user, movie=movie)
         if not seho: result['is_unlike'] = False
         like_cnt = movie.sehos.filter(is_like=True).count()
