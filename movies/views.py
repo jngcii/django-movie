@@ -9,8 +9,9 @@ from django.core.paginator import Paginator
 
 # use static json
 from django.contrib.staticfiles.storage import staticfiles_storage
-import json
 from pprint import pprint
+import json
+import random
 
 def index(request):
     # query 받아오기
@@ -83,7 +84,7 @@ def good_seho(request, movie_id):
                 favor.cnt += 1
                 favor.save()
             else:
-                favor = Favor.create(creator=user, tag=tag, cnt=1)
+                favor = Favor.objects.create(creator=user, tag=tag, cnt=1)
         seho = Seho.objects.create(is_like=True, creator=user, movie=movie)
         if not seho: result['is_like'] = False
         like_cnt = movie.sehos.filter(is_like=True).count()
@@ -130,7 +131,7 @@ def bad_seho(request, movie_id):
                 favor.cnt -= 1
                 favor.save()
             else:
-                favor = Favor.create(creator=user, tag=tag, cnt=-1)
+                favor = Favor.objects.create(creator=user, tag=tag, cnt=-1)
         seho = Seho.objects.create(is_like=False, creator=user, movie=movie)
         if not seho: result['is_unlike'] = False
         like_cnt = movie.sehos.filter(is_like=True).count()
@@ -220,6 +221,20 @@ def get_favor_movies(request):
             genre_dict[tag_name] += cnt
         else:
             genre_dict[tag_name] = cnt
-    print(genre_dict)
-    return JsonResponse()
+    sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
+    sorted_genre = [x for x, y in sorted_genre]
+    movies_count = Movie.objects.filter(tags__name__in=sorted_genre).count()
+    random_numbers = random.sample(range(0, movies_count), 3)
+    m_list = []
+    
+    for number in random_numbers:
+        tmp_movie = Movie.objects.filter(tags__name__in=sorted_genre)[number]
+        tmp_dict = {
+            'title':tmp_movie.title,
+            'poster':tmp_movie.poster,
+            'id':tmp_movie.id,
+        }
+        m_list.append(tmp_dict)
+    print(m_list)
+    return JsonResponse({'movies': m_list})
     
