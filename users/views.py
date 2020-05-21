@@ -11,7 +11,8 @@ def signup(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            user = form.save()
+            login(request, user)
             # main화면으로 돌아가기
             return redirect('home')
 
