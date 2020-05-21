@@ -56,11 +56,11 @@
   {% bootstrap_css %}
   {% bootstrap_javascript jquery='full' %}
 
-  <ul class="nav justify-content-between align-items-center">
+  <ul class="nav justify-content-between align-items-center fixed-top" style="background-color: #f5f6fa; opacity: 0.8;">
     <li class="nav-item d-none d-md-block" style="width: 200px;">
     </li>
     <li class="nav-item">
-      <a class="nav-link logo" href="{% url 'movies:index' %}">조의 영화</a>
+      <a class="nav-link logo" href="{% url 'home' %}">조의 영화</a>
     </li>
     {% if request.user.is_authenticated %}
     <li class="nav-item dropdown">
@@ -81,7 +81,7 @@
     {% endif %}
   </ul>
 
-  <div class="container pt-4">
+  <div class="container pt-5 mt-5">
     {% block body %}
     {% endblock %}
   </div>
