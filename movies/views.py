@@ -15,10 +15,13 @@ from pprint import pprint
 def index(request):
     # query 받아오기
     keywords = []
+    if request.method == 'POST':
+        json_data = json.loads(request.body.decode('utf-8'))
+        keywords = json_data['data']
     movies = Movie.objects.all()
     for keyword in keywords:
         tags = Tag.objects.filter(name=keyword)
-        movies = movie.filter(Q(title__icontains=keyword) | Q(tags__in=tags))
+        movies = movies.filter(Q(title__icontains=keyword) | Q(tags__in=tags))
     # paginator
     paginator = Paginator(movies, 12)
     page_number = request.GET.get('page')

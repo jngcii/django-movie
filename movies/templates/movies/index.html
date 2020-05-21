@@ -3,21 +3,24 @@
 
 {% block body %}
   <div class="search-container mb-5">
-    <form class="form d-flex justify-content-center">
-      <input class="form-control mr-3" style="width: 300px;">
+    <form class="form d-flex justify-content-center search-form" method="POST">
+      <input class="form-control mr-3 search-input" style="width: 300px;" placeholder="키워드를 입력해주세호" required>
       <button class="btn btn-primary">
         <i class="fas fa-search"></i>
       </button>
     </form>
+
+    <ul class="keywords">
+    </ul>
   </div>
 
 
-  <div class="row">
+  <div class="row movie-container">
   {% for movie in page_obj %}
-    <div class="col-12 col-sm-6 col-md-4 col-lg-3 position-relative movies">
-      <div class="position-relative d-flex flex-column justify-content-end">
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 position-relative movies my-3 d-flex flex-column align-items-center justify-content-center">
+      <div class="position-relative d-flex flex-column justify-content-end shadow" style="width: 250px; height: 350px; overflow: hidden; border: 5px solid #fff;">
         <a href="{% url 'movies:detail' movie.id %}">
-          <img src="{{ movie.poster }}" class="w-100">
+          <img src="{{ movie.poster }}" style="width: 100%;">
         </a>
 
         <div class="good seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-start; left: 10px;" data-id="{{ movie.id }}">
@@ -63,8 +66,8 @@
 
 
 <script>
-
-  const movies = document.querySelectorAll(".movies");
+  const movieContainer = document.querySelector(".movie-container");
+  const movies = movieContainer.querySelectorAll(".movies");
 
   movies.forEach(movie => {
     const good = movie.querySelector(".good");
@@ -121,6 +124,7 @@
     good.addEventListener("click", onGood);
     bad.addEventListener("click", onBad);
   })
+
 
 </script>
 {% endblock %}
