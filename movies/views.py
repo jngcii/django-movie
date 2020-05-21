@@ -235,18 +235,19 @@ def get_favor_movies(request):
         '전쟁': 0,
         'TV영화': 0
     }
-    for favor in request.user.favors.all():
-        tag_name = favor.tag.name
-        cnt = favor.cnt
-        if tag_name in genre_dict:
-            genre_dict[tag_name] += cnt
-        else:
-            genre_dict[tag_name] = cnt
-            
-    sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
-    sorted_genre = [x for x, y in sorted_genre]
-
     if request.user.is_authenticated:    
+        for favor in request.user.favors.all():
+            tag_name = favor.tag.name
+            cnt = favor.cnt
+            if tag_name in genre_dict:
+                genre_dict[tag_name] += cnt
+            else:
+                genre_dict[tag_name] = cnt
+                
+        sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
+        sorted_genre = [x for x, y in sorted_genre]
+
+    
         movies_count = Movie.objects.filter(tags__name__in=sorted_genre).count()
         random_numbers = random.sample(range(movies_count), 3)
         m_list = []
