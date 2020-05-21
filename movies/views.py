@@ -210,3 +210,16 @@ def fetch_movies(request):
             movie_obj.tags.add(tag)
 
     return render(request, 'movies/index.html')
+
+def get_favor_movies(request):
+    genre_dict = {}
+    for favor in request.user.favors.all():
+        tag_name = favor.tag.name
+        cnt = favor.cnt
+        if tag_name in genre_dict:
+            genre_dict[tag_name] += cnt
+        else:
+            genre_dict[tag_name] = cnt
+    print(genre_dict)
+    return JsonResponse()
+    
