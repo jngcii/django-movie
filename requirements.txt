@@ -9,3 +9,5 @@ pytz==2020.1
 requests==2.23.0
 urllib3==1.25.9
 whitenoise==5.0.1
+django-bootstrap-pagination==1.7.1
+django-bootstrap4==1.1.1
