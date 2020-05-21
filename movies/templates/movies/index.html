@@ -24,13 +24,13 @@
         </a>
 
         <div class="good seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-start; left: 10px;" data-id="{{ movie.id }}">
-          <img draggable="false" src="https://lh3.googleusercontent.com/proxy/p4JzP0hLKghtAsTPFsOZChFjrJ1pJc8X3s0rz4qnWL5mRnekGWd515DfgPQxw316LXueJb9hDvPzc_5VG1MJA7Z-1tcjB86xj-SFo-z99UEvIirNml2ZcCXIKSODIDDCSzu44GAW-16-Jwg_6BuYdDn7" class="seho my-opacity">
-          <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: -10px;">{{ movie.good_seho }}</span>
+          <img style="border: 3px solid #00a8ff;" draggable="false" src="https://lh3.googleusercontent.com/proxy/p4JzP0hLKghtAsTPFsOZChFjrJ1pJc8X3s0rz4qnWL5mRnekGWd515DfgPQxw316LXueJb9hDvPzc_5VG1MJA7Z-1tcjB86xj-SFo-z99UEvIirNml2ZcCXIKSODIDDCSzu44GAW-16-Jwg_6BuYdDn7" class="seho my-opacity">
+          <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: 0px;">{{ movie.good_seho }}</span>
         </div>
 
         <div class="bad seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-end; right: 10px;" data-id="{{ movie.id }}">
-          <img draggable="false" src="https://lh3.googleusercontent.com/proxy/cco_gmP-HqObsn360yglSAPNPM-Lzl8c2iKoEkRbABeUVAG4wtkkoPMX54aCBSPgat9EdVcCdSpTq3-P8hhZhlbzAxPBLx71vF8EKKXEk96j0RtD-3yVzJs1H8Tmy2CgPkWFPN9_NN1O1uooMFtPO1qMFOckfLlw2zWd7iXggQK57CRQj5gPwKE" class="seho my-opacity">
-          <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: -10px;">{{ movie.bad_seho }}</span>
+          <img style="border: 3px solid #00a8ff;" draggable="false" src="https://lh3.googleusercontent.com/proxy/cco_gmP-HqObsn360yglSAPNPM-Lzl8c2iKoEkRbABeUVAG4wtkkoPMX54aCBSPgat9EdVcCdSpTq3-P8hhZhlbzAxPBLx71vF8EKKXEk96j0RtD-3yVzJs1H8Tmy2CgPkWFPN9_NN1O1uooMFtPO1qMFOckfLlw2zWd7iXggQK57CRQj5gPwKE" class="seho my-opacity">
+          <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: 0px;">{{ movie.bad_seho }}</span>
         </div>
       </div>
     </div>
@@ -78,6 +78,7 @@
     const badCnt = bad.querySelector("span");
 
     const onGood = function(e) {
+      {% if request.user.is_authenticated %}
       const movieID = good.dataset.id;
       const url = `/movies/${movieID}/good/`;
       axios.get(url).then(res => {
@@ -97,6 +98,9 @@
         goodCnt.innerText = like_cnt;
         badCnt.innerText = unlike_cnt;
       })
+      {% else %}
+        alert("로그인된 사용자만 이용하세호.")
+      {% endif %}
     }
     
     const onBad = function(e) {
