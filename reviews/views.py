@@ -11,7 +11,6 @@ from movies.models import Movie
 
 @login_required
 def review_api(request, id):
-    print(request.method)
     if request.method == 'POST':
         """
         create review

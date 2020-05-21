@@ -16,12 +16,13 @@ def index(request):
     # query 받아오기
     keywords = []
     if request.method == 'POST':
-        json_data = json.loads(request.body.decode('utf-8'))
-        keywords = json_data['data']
+        tmp = dict(request.POST).get('keyword', None)
+        if tmp:
+            keywords = tmp
     movies = Movie.objects.all()
     for keyword in keywords:
         tags = Tag.objects.filter(name=keyword)
-        movies = movies.filter(Q(title__icontains=keyword) | Q(tags__in=tags))
+        movies = movies.filter(Q(title__icontains=keyword) | Q(original_title__icontains=keyword) | Q(overview__icontains=keyword))
     # paginator
     paginator = Paginator(movies, 12)
     page_number = request.GET.get('page')

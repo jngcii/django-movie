@@ -38,6 +38,16 @@
       margin-right:auto;
       margin-top: 20px;
     }
+
+    .my-single {
+      display: inline-block;
+      padding: 3px 10px;
+      text-align: center;
+      color: #fff;
+      background-color: #8c7ae6 !important;
+      border-radius: 10px;
+      margin: 5px;
+    }
   </style>
 </head>
 <body>
@@ -53,9 +63,13 @@
       <a class="nav-link logo" href="{% url 'movies:index' %}">조의 영화</a>
     </li>
     {% if request.user.is_authenticated %}
-    <li class="nav-item d-flex justify-content-end" style="width: 200px;">
-      <span>{{ request.user.username }}님 환영합니다</span>
-      <a class="nav-link" href="{% url 'users:signout' %}">로그아웃</a>
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        어서오세호, {{ request.user.username }}
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+        <a class="dropdown-item" href="{% url 'users:signout' %}">로그아웃</a>
+      </div>
     </li>
     {% else %}
     <li class="nav-item d-flex justify-content-end align-items-center" style="width: 200px;">

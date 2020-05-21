@@ -2,16 +2,16 @@
 {% load bootstrap_pagination %}
 
 {% block body %}
-  <div class="search-container mb-5">
-    <form class="form d-flex justify-content-center search-form" method="POST">
-      <input class="form-control mr-3 search-input" style="width: 300px;" placeholder="키워드를 입력해주세호" required>
-      <button class="btn btn-primary">
+  <div class="search-container mb-5 d-flex flex-column align-items-center">
+    <form class="form d-flex align-items-center search-form flex-column" method="POST">
+      {% csrf_token %}
+      <input class="form-control search-input" name="keyword" style="width: 400px;" placeholder="키워드를 입력해주세호">
+      <small class="text-secondary">tab을 눌러 여러 키워드로 검색하세호</small>
+      <div class="keyword-list my-1" style="width: 400px;"></div>
+      <button class="btn btn-primary" style="width: 400px;">
         <i class="fas fa-search"></i>
       </button>
     </form>
-
-    <ul class="keywords">
-    </ul>
   </div>
 
 
@@ -34,7 +34,10 @@
         </div>
       </div>
     </div>
-
+  {% empty %}
+    <div>
+      영화가 없습니다.
+    </div>
   {% endfor %}
 
   {% bootstrap_paginate page_obj range=5 show_prev_next="false" show_first_last="true" %}
@@ -128,6 +131,30 @@
     good.addEventListener("click", onGood);
     bad.addEventListener("click", onBad);
   })
+
+  const form = document.querySelector(".search-form");
+  const input = form.querySelector(".search-input");
+  const kkk = document.querySelector(".keyword-list");
+  
+  const onTab = function(e) {
+    if (e.keyCode === 9) {
+      e.preventDefault();
+      if (!!input.value) {
+        const keywordContainer = document.createElement("div");
+        keywordContainer.className = "my-single shadow"
+        const newInput = document.createElement("input");
+        newInput.setAttribute("type", "hidden");
+        newInput.setAttribute("name", "keyword");
+        newInput.setAttribute("value", input.value);
+        keywordContainer.innerText = input.value;
+        input.value = null;
+        form.appendChild(newInput);
+        kkk.appendChild(keywordContainer);
+        form.querySelectorAll("input").forEach(inp => console.log(inp.value))
+      } 
+    }
+  }
+  form.addEventListener("keydown", onTab);
 
 
 </script>
