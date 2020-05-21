@@ -2,7 +2,8 @@
 {% load bootstrap_pagination %}
 
 {% block body %}
-  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+<div class="d-flex justify-content-center">
+  <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" style="width:400px; height: 300px; overflow: hidden; border-top-left-radius: 10px; border-top-right-radius: 10px;">
     <ol class="carousel-indicators">
       <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
       <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
@@ -10,13 +11,13 @@
     </ol>
     <div class="carousel-inner">
       <div class="carousel-item active">
-        <img class="d-block js-img" src="https://image.tmdb.org/t/p/w342//o2cYXVhlnEHqpPLprJKW6GYf2CQ.jpg" alt="First slide">
+        <img class="d-block js-img w-100" data-id="0" src="https://image.tmdb.org/t/p/w342//o2cYXVhlnEHqpPLprJKW6GYf2CQ.jpg" alt="First slide">
       </div>
       <div class="carousel-item">
-        <img class="d-block js-img" src="https://image.tmdb.org/t/p/w342//o2cYXVhlnEHqpPLprJKW6GYf2CQ.jpg" alt="Second slide">
+        <img class="d-block js-img w-100" data-id="1" src="https://image.tmdb.org/t/p/w342//o2cYXVhlnEHqpPLprJKW6GYf2CQ.jpg" alt="Second slide">
       </div>
       <div class="carousel-item">
-        <img class="d-block js-img" src="https://image.tmdb.org/t/p/w342//o2cYXVhlnEHqpPLprJKW6GYf2CQ.jpg" alt="Third slide">
+        <img class="d-block js-img w-100" data-id="2" src="https://image.tmdb.org/t/p/w342//o2cYXVhlnEHqpPLprJKW6GYf2CQ.jpg" alt="Third slide">
       </div>
     </div>
     <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
@@ -28,6 +29,7 @@
       <span class="sr-only">Next</span>
     </a>
   </div>
+</div>
 
   <div class="search-container mb-5 d-flex flex-column align-items-center">
     <form class="form d-flex align-items-center search-form flex-column" method="POST">
@@ -51,12 +53,12 @@
         </a>
 
         <div class="good seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-start; left: 10px;" data-id="{{ movie.id }}">
-          <img style="border: 3px solid #00a8ff;" draggable="false" src="https://lh3.googleusercontent.com/proxy/p4JzP0hLKghtAsTPFsOZChFjrJ1pJc8X3s0rz4qnWL5mRnekGWd515DfgPQxw316LXueJb9hDvPzc_5VG1MJA7Z-1tcjB86xj-SFo-z99UEvIirNml2ZcCXIKSODIDDCSzu44GAW-16-Jwg_6BuYdDn7" class="seho my-opacity">
+          <img style="border: 3px solid #00a8ff;" draggable="false" src="https://image.ajunews.com/content/image/2018/03/12/20180312094115620469.jpg" class="seho my-opacity">
           <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: 0px;">{{ movie.good_seho }}</span>
         </div>
 
         <div class="bad seho position-absolute d-flex align-items-center justify-content-center" style="align-self: flex-end; right: 10px;" data-id="{{ movie.id }}">
-          <img style="border: 3px solid #00a8ff;" draggable="false" src="https://lh3.googleusercontent.com/proxy/cco_gmP-HqObsn360yglSAPNPM-Lzl8c2iKoEkRbABeUVAG4wtkkoPMX54aCBSPgat9EdVcCdSpTq3-P8hhZhlbzAxPBLx71vF8EKKXEk96j0RtD-3yVzJs1H8Tmy2CgPkWFPN9_NN1O1uooMFtPO1qMFOckfLlw2zWd7iXggQK57CRQj5gPwKE" class="seho my-opacity">
+          <img style="border: 3px solid #00a8ff;" draggable="false" src="https://file3.instiz.net/data/file3/2018/03/01/2/f/e/2fe2d3f2ad9e1ed97b939a847d918539.jpg" class="seho my-opacity">
           <span class="position-absolute" style="font-size: 20px; font-weight:700; bottom: 0px;">{{ movie.bad_seho }}</span>
         </div>
       </div>
@@ -72,23 +74,6 @@
   
   <hr>
   
-  <div class="pagination">
-    <span class="step-links">
-        {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo; first</a>
-            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
-        {% endif %}
-  
-        <span class="current">
-            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
-        </span>
-  
-        {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">next</a>
-            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
-  </div>
 
 
 
@@ -183,18 +168,19 @@
   form.addEventListener("keydown", onTab);
 
 
-
-
-
-
-
-
-
+  const jsIMG = document.querySelectorAll(".js-img");
   
   const init = function() {
     axios.get("/movies/get_favors/")
       .then(res => {
-        console.log(res.data)
+        const { movies } = res.data;
+        movies.map((movie, idx) => {
+          jsIMG.forEach(img => {
+            if(img.dataset.id == idx) {
+              img.setAttribute("src", movie.poster)
+            } 
+          })
+        })
       })
   }
   init()

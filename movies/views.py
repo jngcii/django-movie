@@ -173,7 +173,8 @@ def fetch_movies(request):
         10749: '로맨스',
         10751: '가족',
         10752: '전쟁',
-        10770: 'TV영화'}
+        10770: 'TV영화'
+    }
     
 
     # movie 오브젝트 생성
@@ -213,7 +214,27 @@ def fetch_movies(request):
     return render(request, 'movies/index.html')
 
 def get_favor_movies(request):
-    genre_dict = {}
+    genre_dict = {
+        '모험': 0,
+        '판타지': 0,
+        '애니메이션': 0,
+        '드라마': 0,
+        '호러': 0,
+        '액션': 0,
+        '코미디': 0,
+        '사극': 0,
+        '서부극': 0,
+        '스릴러': 0,
+        '범죄': 0,
+        '다큐멘터리': 0,
+        '공상과학': 0,
+        '미스터리': 0,
+        '뮤지컬': 0,
+        '로맨스': 0,
+        '가족': 0,
+        '전쟁': 0,
+        'TV영화': 0
+    }
     for favor in request.user.favors.all():
         tag_name = favor.tag.name
         cnt = favor.cnt
@@ -224,7 +245,7 @@ def get_favor_movies(request):
     sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
     sorted_genre = [x for x, y in sorted_genre]
     movies_count = Movie.objects.filter(tags__name__in=sorted_genre).count()
-    random_numbers = random.sample(range(0, movies_count), 3)
+    random_numbers = random.sample(range(movies_count), 3)
     m_list = []
     
     for number in random_numbers:
@@ -235,6 +256,5 @@ def get_favor_movies(request):
             'id':tmp_movie.id,
         }
         m_list.append(tmp_dict)
-    print(m_list)
     return JsonResponse({'movies': m_list})
     
