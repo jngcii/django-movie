@@ -242,8 +242,10 @@ def get_favor_movies(request):
             genre_dict[tag_name] += cnt
         else:
             genre_dict[tag_name] = cnt
+            
     sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
     sorted_genre = [x for x, y in sorted_genre]
+
     if request.user.is_authenticated:    
         movies_count = Movie.objects.filter(tags__name__in=sorted_genre).count()
         random_numbers = random.sample(range(movies_count), 3)
@@ -257,6 +259,8 @@ def get_favor_movies(request):
                 'id':tmp_movie.id,
             }
             m_list.append(tmp_dict)
+        return JsonResponse({'movies': m_list})
+
     else:
         random_numbers = random.sample(range(100), 3)
         m_list = []
@@ -269,5 +273,5 @@ def get_favor_movies(request):
                 'id':tmp_movie.id,
             }
             m_list.append(tmp_dict)
-    return JsonResponse({'movies': m_list})
+        return JsonResponse({'movies': m_list})
     
