@@ -42,3 +42,8 @@ class Seho(models.Model):
     is_like = models.BooleanField()
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE, related_name='sehos')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sehos')
+
+class favor(models.Model):
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favors')
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='favors')
+    cnt = models.IntegerField(default=0)
