@@ -10,6 +10,7 @@
   <style>
     body {
       background-color: #f5f6fa !important;
+      position: relative;
     }
     .logo {
       font-family: 'Black Han Sans', sans-serif;
@@ -27,6 +28,8 @@
       height: 70px;
       border-radius: 35px;
       bottom: 10px;
+      cursor: pointer;
+      user-select: none;
     }
     .my-opacity {
       border-color: #fff !important;
@@ -47,6 +50,16 @@
       background-color: #8c7ae6 !important;
       border-radius: 10px;
       margin: 5px;
+    }
+
+    .kuzim2, .kuzim1 {
+      transition: .3s;
+    }
+    .kuzim1:hover {
+      transform: scale(1.1);
+    }
+    .kuzim2:hover {
+      transform: scale(1.05);
     }
   </style>
 </head>

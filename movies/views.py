@@ -1,4 +1,4 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Q
 from django.http import JsonResponse
 from .models import Movie, Tag, Seho, Favor
@@ -9,7 +9,6 @@ from django.core.paginator import Paginator
 
 # use static json
 from django.contrib.staticfiles.storage import staticfiles_storage
-from pprint import pprint
 import json
 import random
 
@@ -28,9 +27,63 @@ def index(request):
     paginator = Paginator(movies, 12)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+
+
+    genre_dict = {
+        '모험': 0,
+        '판타지': 0,
+        '애니메이션': 0,
+        '드라마': 0,
+        '호러': 0,
+        '액션': 0,
+        '코미디': 0,
+        '사극': 0,
+        '서부극': 0,
+        '스릴러': 0,
+        '범죄': 0,
+        '다큐멘터리': 0,
+        '공상과학': 0,
+        '미스터리': 0,
+        '뮤지컬': 0,
+        '로맨스': 0,
+        '가족': 0,
+        '전쟁': 0,
+        'TV영화': 0
+    }
+    if request.user.is_authenticated:    
+        for favor in request.user.favors.all():
+            tag_name = favor.tag.name
+            cnt = favor.cnt
+            if tag_name in genre_dict:
+                genre_dict[tag_name] += cnt
+            else:
+                genre_dict[tag_name] = cnt
+                
+        sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
+        sorted_genre = [x for x, y in sorted_genre]
+
+    
+        movies_count = Movie.objects.filter(tags__name__in=sorted_genre).count()
+        random_numbers = random.sample(range(movies_count), 3)
+        m_list = []
+        
+        for number in random_numbers:
+            tmp_movie = Movie.objects.filter(tags__name__in=sorted_genre)[number]
+            m_list.append(tmp_movie)
+
+    else:
+        random_numbers = random.sample(range(100), 3)
+        m_list = []
+        
+        for number in random_numbers:
+            tmp_movie = Movie.objects.all()[number]
+            m_list.append(tmp_movie)
+    
     context = {
         'movies': movies,
         'page_obj':page_obj,
+        'favors': m_list,
     }
     return render(request, 'movies/index.html', context)
 
@@ -39,9 +92,20 @@ def detail(request, movie_id):
     movie = get_object_or_404(Movie, id=movie_id)
     form = ReviewForm()
 
+    sorted_genre = movie.tags.all()
+    movies_count = Movie.objects.filter(tags__in=sorted_genre).count()
+    random_numbers = random.sample(range(movies_count), 10)
+    m_list = []
+    
+    for number in random_numbers:
+        tmp_movie = Movie.objects.filter(tags__in=sorted_genre)[number]
+        m_list.append(tmp_movie)
+    
     context = {
         'movie': movie,
         'form': form,
+        'recommends1': m_list[:5],
+        'recommends2': m_list[5:]
     }
 
     return render(request, 'movies/detail.html', context)
@@ -211,68 +275,68 @@ def fetch_movies(request):
                 tag = Tag.objects.create(name=tmp)
             movie_obj.tags.add(tag)
 
-    return render(request, 'movies/index.html')
+    return redirect('home')
 
-def get_favor_movies(request):
-    genre_dict = {
-        '모험': 0,
-        '판타지': 0,
-        '애니메이션': 0,
-        '드라마': 0,
-        '호러': 0,
-        '액션': 0,
-        '코미디': 0,
-        '사극': 0,
-        '서부극': 0,
-        '스릴러': 0,
-        '범죄': 0,
-        '다큐멘터리': 0,
-        '공상과학': 0,
-        '미스터리': 0,
-        '뮤지컬': 0,
-        '로맨스': 0,
-        '가족': 0,
-        '전쟁': 0,
-        'TV영화': 0
-    }
-    if request.user.is_authenticated:    
-        for favor in request.user.favors.all():
-            tag_name = favor.tag.name
-            cnt = favor.cnt
-            if tag_name in genre_dict:
-                genre_dict[tag_name] += cnt
-            else:
-                genre_dict[tag_name] = cnt
+# def get_favor_movies(request):
+#     genre_dict = {
+#         '모험': 0,
+#         '판타지': 0,
+#         '애니메이션': 0,
+#         '드라마': 0,
+#         '호러': 0,
+#         '액션': 0,
+#         '코미디': 0,
+#         '사극': 0,
+#         '서부극': 0,
+#         '스릴러': 0,
+#         '범죄': 0,
+#         '다큐멘터리': 0,
+#         '공상과학': 0,
+#         '미스터리': 0,
+#         '뮤지컬': 0,
+#         '로맨스': 0,
+#         '가족': 0,
+#         '전쟁': 0,
+#         'TV영화': 0
+#     }
+#     if request.user.is_authenticated:    
+#         for favor in request.user.favors.all():
+#             tag_name = favor.tag.name
+#             cnt = favor.cnt
+#             if tag_name in genre_dict:
+#                 genre_dict[tag_name] += cnt
+#             else:
+#                 genre_dict[tag_name] = cnt
                 
-        sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
-        sorted_genre = [x for x, y in sorted_genre]
+#         sorted_genre = sorted(genre_dict.items(), key=lambda item: -item[1])[:2]
+#         sorted_genre = [x for x, y in sorted_genre]
 
     
-        movies_count = Movie.objects.filter(tags__name__in=sorted_genre).count()
-        random_numbers = random.sample(range(movies_count), 3)
-        m_list = []
+#         movies_count = Movie.objects.filter(tags__name__in=sorted_genre).count()
+#         random_numbers = random.sample(range(movies_count), 3)
+#         m_list = []
         
-        for number in random_numbers:
-            tmp_movie = Movie.objects.filter(tags__name__in=sorted_genre)[number]
-            tmp_dict = {
-                'title':tmp_movie.title,
-                'poster':tmp_movie.poster,
-                'id':tmp_movie.id,
-            }
-            m_list.append(tmp_dict)
-        return JsonResponse({'movies': m_list})
+#         for number in random_numbers:
+#             tmp_movie = Movie.objects.filter(tags__name__in=sorted_genre)[number]
+#             tmp_dict = {
+#                 'title':tmp_movie.title,
+#                 'poster':tmp_movie.poster,
+#                 'id':tmp_movie.id,
+#             }
+#             m_list.append(tmp_dict)
+#         return JsonResponse({'movies': m_list})
 
-    else:
-        random_numbers = random.sample(range(100), 3)
-        m_list = []
+#     else:
+#         random_numbers = random.sample(range(100), 3)
+#         m_list = []
         
-        for number in random_numbers:
-            tmp_movie = Movie.objects.all()[number]
-            tmp_dict = {
-                'title':tmp_movie.title,
-                'poster':tmp_movie.poster,
-                'id':tmp_movie.id,
-            }
-            m_list.append(tmp_dict)
-        return JsonResponse({'movies': m_list})
+#         for number in random_numbers:
+#             tmp_movie = Movie.objects.all()[number]
+#             tmp_dict = {
+#                 'title':tmp_movie.title,
+#                 'poster':tmp_movie.poster,
+#                 'id':tmp_movie.id,
+#             }
+#             m_list.append(tmp_dict)
+#         return JsonResponse({'movies': m_list})
     
